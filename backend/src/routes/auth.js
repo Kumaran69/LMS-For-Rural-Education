@@ -5,7 +5,6 @@ import User from "../models/User.js";
 import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
-const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
@@ -21,7 +20,7 @@ router.post("/google", async (req, res) => {
     let email, name, avatar, googleId;
 
     const clientId = process.env.VITE_GOOGLE_CLIENT_ID;
-    const isClientDefaultPlaceholder = !clientId || clientId.includes("630323490461-deca1qckbk7k7eesrmemdh05nkkjs5gu.apps.googleusercontent.com");
+    const isClientDefaultPlaceholder = !clientId || clientId.includes("your-google-client-id-here.apps.googleusercontent.com");
 
     if (isMock || isClientDefaultPlaceholder) {
       // Mock / Dev Fallback Flow: Uses email/name passed by the frontend
@@ -33,6 +32,7 @@ router.post("/google", async (req, res) => {
       console.log(`[AUTH] Performing dev fallback/mock login for: ${email}`);
     } else {
       // Real-time Google ID Token Verification
+      const client = new OAuth2Client(clientId);
       const ticket = await client.verifyIdToken({
         idToken: credential,
         audience: clientId,

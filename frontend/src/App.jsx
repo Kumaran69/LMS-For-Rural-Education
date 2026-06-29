@@ -709,7 +709,7 @@ function Login({ onLoginSuccess }) {
 
     if (window.google) {
       window.google.accounts.id.initialize({
-        client_id: "your-google-client-id-here.apps.googleusercontent.com",
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "your-google-client-id-here.apps.googleusercontent.com",
         callback: handleGoogleCallback,
       });
       window.google.accounts.id.renderButton(
