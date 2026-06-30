@@ -182,11 +182,51 @@ const G = {
 const css = `
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Nunito', sans-serif; background: ${G.bg}; color: ${G.text}; }
+  body { font-family: 'Nunito', sans-serif; background: linear-gradient(180deg, ${G.bg} 0%, #FAFAF4 100%); background-attachment: fixed; color: ${G.text}; overflow-x: hidden; }
   button { font-family: 'Nunito', sans-serif; cursor: pointer; border: none; background: none; }
   input, select { font-family: 'Nunito', sans-serif; }
 
-  .app { min-height: 100vh; display: flex; flex-direction: column; }
+  .app { min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
+
+  /* FLOATING GLOW CIRCLES */
+  .bg-glow-circle {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.12;
+    z-index: 0;
+    pointer-events: none;
+    animation: floatGlow 25s infinite ease-in-out;
+  }
+  .bg-glow-circle.one {
+    width: 350px;
+    height: 350px;
+    background: ${G.orange};
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+  }
+  .bg-glow-circle.two {
+    width: 450px;
+    height: 450px;
+    background: ${G.purple};
+    bottom: -150px;
+    right: -150px;
+    animation-delay: -5s;
+  }
+  .bg-glow-circle.three {
+    width: 300px;
+    height: 300px;
+    background: ${G.blue};
+    top: 45%;
+    left: 45%;
+    animation-delay: -10s;
+  }
+  @keyframes floatGlow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(50px, -60px) scale(1.15); }
+    66% { transform: translate(-40px, 40px) scale(0.9); }
+  }
 
   /* NAV */
   .nav { background: ${G.white}; border-bottom: 1.5px solid ${G.grayBorder}; padding: 0 20px;
@@ -212,21 +252,30 @@ const css = `
 
   /* CARDS (GLASSMORPHISM EFFECT) */
   .card { 
-    background: rgba(255, 255, 255, 0.85); 
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.5); 
+    background: rgba(255, 255, 255, 0.75); 
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4); 
     border-radius: 16px; 
     padding: 24px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
   .card-sm { 
-    background: rgba(255, 255, 255, 0.9); 
-    border: 1px solid ${G.grayBorder}; 
+    background: rgba(255, 255, 255, 0.8); 
+    border: 1px solid rgba(255, 255, 255, 0.5); 
     border-radius: 14px; 
     padding: 16px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.02);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .card-sm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.06);
   }
 
   /* LOGIN */
@@ -256,18 +305,33 @@ const css = `
     font-weight: 700; 
     width: 100%; 
     box-shadow: 0 4px 14px rgba(232,93,32,0.3);
-    transition: transform 0.2s, opacity 0.2s; 
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
   }
-  .btn-primary:hover { transform: translateY(-1px); opacity: 0.95; }
-  .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-primary:hover { 
+    transform: translateY(-3px) scale(1.02); 
+    opacity: 0.98;
+    box-shadow: 0 6px 20px rgba(232,93,32,0.45);
+  }
+  .btn-primary:active {
+    transform: translateY(1px) scale(0.98);
+  }
+  .btn-primary:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
   .btn-sm { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; }
   .btn-outline { border: 1.5px solid ${G.grayBorder}; color: ${G.textSub}; border-radius: 8px;
-    padding: 7px 14px; font-size: 13px; font-weight: 600; transition: all .2s; }
-  .btn-outline:hover { border-color: ${G.orange}; color: ${G.orange}; }
+    padding: 7px 14px; font-size: 13px; font-weight: 600; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+  .btn-outline:hover { border-color: ${G.orange}; color: ${G.orange}; transform: translateY(-2px) scale(1.03); }
+  .btn-outline:active { transform: translateY(1px) scale(0.97); }
 
   /* DASHBOARD */
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
   .dash-hero { 
-    background: linear-gradient(135deg, ${G.orange} 0%, #F2A623 50%, ${G.purple} 100%);
+    background: linear-gradient(-45deg, ${G.orange}, #F2A623, ${G.purple}, ${G.blue});
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     border-radius: 18px; 
     padding: 28px; 
     color: ${G.white}; 
@@ -292,9 +356,10 @@ const css = `
   .section-title { font-size: 17px; font-weight: 800; color: ${G.text}; margin-bottom: 14px; }
 
   /* SUBJECT CARDS */
-  .subj-card { border-radius: 14px; padding: 18px; cursor: pointer; transition: transform .2s, box-shadow .2s;
+  .subj-card { border-radius: 14px; padding: 18px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border: 1.5px solid transparent; }
-  .subj-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+  .subj-card:hover { transform: translateY(-5px) scale(1.04); box-shadow: 0 12px 24px rgba(0,0,0,.08); }
+  .subj-card:active { transform: translateY(-2px) scale(0.98); }
   .subj-card.active { border-color: ${G.orange}; }
   .subj-icon { font-size: 32px; margin-bottom: 8px; }
   .subj-name { font-size: 14px; font-weight: 800; margin-bottom: 4px; }
@@ -303,10 +368,31 @@ const css = `
 
   /* QUEST MAP & GLOWINGS */
   .quest-list { display: flex; flex-direction: column; gap: 12px; }
-  .quest-item { display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 12px;
-    border: 1.5px solid ${G.grayBorder}; background: ${G.white}; cursor: pointer; transition: all .2s; }
-  .quest-item:hover:not(.locked) { border-color: ${G.orange}; box-shadow: 0 4px 16px rgba(232,93,32,.15); }
-  .quest-item.locked { opacity: .5; cursor: not-allowed; }
+  @keyframes itemEntrance {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .quest-item { 
+    display: flex; 
+    align-items: center; 
+    gap: 14px; 
+    padding: 16px; 
+    border-radius: 12px;
+    border: 1.5px solid ${G.grayBorder}; 
+    background: ${G.white}; 
+    cursor: pointer; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    animation: itemEntrance 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+  }
+  .quest-item:hover:not(.locked) { 
+    border-color: ${G.orange}; 
+    transform: translateY(-3px) scale(1.015);
+    box-shadow: 0 8px 20px rgba(232,93,32,.12); 
+  }
+  .quest-item:active:not(.locked) {
+    transform: translateY(1px) scale(0.985);
+  }
+  .quest-item.locked { opacity: .5; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
   .quest-item.done { background: ${G.greenLight}; border-color: ${G.green}; }
   
   @keyframes pulseGlow {
@@ -314,7 +400,7 @@ const css = `
     70% { box-shadow: 0 0 0 10px rgba(232, 93, 32, 0); }
     100% { box-shadow: 0 0 0 0 rgba(232, 93, 32, 0); }
   }
-  .quest-item.current { animation: pulseGlow 2s infinite; border-color: ${G.orange}; }
+  .quest-item.current { animation: pulseGlow 2s infinite, itemEntrance 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) both; border-color: ${G.orange}; }
   
   .quest-circle { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center;
     justify-content: center; font-size: 20px; flex-shrink: 0; }
@@ -407,11 +493,23 @@ const css = `
   .quiz-opts { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
   .quiz-opt { padding: 14px 18px; border: 2px solid ${G.grayBorder}; border-radius: 12px;
     font-size: 15px; font-weight: 600; color: ${G.text}; background: ${G.white};
-    text-align: left; transition: all .2s; cursor: pointer; }
-  .quiz-opt:hover:not(.selected):not(.correct):not(.wrong) { border-color: ${G.orange}; color: ${G.orange}; background: ${G.orangeLight}; }
-  .quiz-opt.selected { border-color: ${G.orange}; background: ${G.orangeLight}; color: ${G.orange}; }
-  .quiz-opt.correct  { border-color: ${G.green};  background: ${G.greenLight};  color: ${G.green}; }
-  .quiz-opt.wrong    { border-color: #E24B4A; background: #FCEBEB; color: #E24B4A; }
+    text-align: left; transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.15); cursor: pointer; }
+  .quiz-opt:hover:not(.selected):not(.correct):not(.wrong) { border-color: ${G.orange}; color: ${G.orange}; background: ${G.orangeLight}; transform: translateY(-2px) scale(1.01); }
+  .quiz-opt:active:not(.selected):not(.correct):not(.wrong) { transform: translateY(1px) scale(0.99); }
+  .quiz-opt.selected { border-color: ${G.orange}; background: ${G.orangeLight}; color: ${G.orange}; transform: scale(1.02); }
+  .quiz-opt.correct  { border-color: ${G.green};  background: ${G.greenLight};  color: ${G.green}; transform: scale(1.02); animation: correctPop 0.4s ease; }
+  .quiz-opt.wrong    { border-color: #E24B4A; background: #FCEBEB; color: #E24B4A; transform: scale(0.98); animation: shakeWrong 0.4s ease; }
+
+  @keyframes correctPop {
+    0% { transform: scale(1.02); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1.02); }
+  }
+  @keyframes shakeWrong {
+    0%, 100% { transform: translateX(0) scale(0.98); }
+    20%, 60% { transform: translateX(-4px) scale(0.98); }
+    40%, 80% { transform: translateX(4px) scale(0.98); }
+  }
   .quiz-result { text-align: center; padding: 40px 20px; }
   .quiz-score-ring { width: 120px; height: 120px; border-radius: 50%; background: ${G.orangeLight};
     display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
@@ -480,8 +578,11 @@ const css = `
   .divider { height: 1px; background: ${G.grayBorder}; margin: 16px 0; }
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     background: ${G.text}; color: ${G.white}; padding: 12px 24px; border-radius: 12px;
-    font-size: 14px; font-weight: 600; z-index: 999; animation: fadeInUp .3s ease; pointer-events: none; }
-  @keyframes fadeInUp { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+    font-size: 14px; font-weight: 600; z-index: 999; animation: toastEntrance 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; pointer-events: none; }
+  @keyframes toastEntrance { 
+    from { opacity: 0; transform: translateX(-50%) translateY(20px) scale(0.9); } 
+    to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); } 
+  }
 
   .progress-bar-wrap { height: 10px; background: ${G.grayBorder}; border-radius: 5px; }
   .progress-bar-fill { height: 10px; background: ${G.orange}; border-radius: 5px; transition: width .4s; }
@@ -2448,6 +2549,9 @@ export default function App() {
     return (
       <>
         <style>{css}</style>
+        <div className="bg-glow-circle one"></div>
+        <div className="bg-glow-circle two"></div>
+        <div className="bg-glow-circle three"></div>
         <Login onLoginSuccess={handleLoginSuccess} />
         <Toast msg={toast} />
       </>
@@ -2458,6 +2562,9 @@ export default function App() {
     return (
       <>
         <style>{css}</style>
+        <div className="bg-glow-circle one"></div>
+        <div className="bg-glow-circle two"></div>
+        <div className="bg-glow-circle three"></div>
         <Onboarding user={user} onOnboardComplete={handleOnboardComplete} />
         <Toast msg={toast} />
       </>
@@ -2524,6 +2631,9 @@ export default function App() {
   return (
     <>
       <style>{css}</style>
+      <div className="bg-glow-circle one"></div>
+      <div className="bg-glow-circle two"></div>
+      <div className="bg-glow-circle three"></div>
       <div className="app">
         <NavBar user={user} page={page} setPage={setPage} onLogout={handleLogout} />
         <main className="main">{renderPage()}</main>
