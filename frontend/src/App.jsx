@@ -95,7 +95,7 @@ const ODIA_WORDS = [
 
 // ─── API CONNECTIVITY ─────────────────────────────────────────────────────────
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = import.meta.env.DEV ? "http://localhost:5001/api" : "/api";
 
 const apiCall = async (endpoint, method = "GET", body = null) => {
   const token = localStorage.getItem("token");
@@ -668,6 +668,139 @@ const css = `
     .badge-grid { grid-template-columns: 1fr; }
     .hero-stats { grid-template-columns: 1fr; }
   }
+
+  /* WEB APP SIDEBAR LAYOUT */
+  .web-sidebar {
+    width: 260px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-right: 1.5px solid ${G.grayBorder};
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 20px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    z-index: 10;
+  }
+  .web-content {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    background: rgba(250, 250, 248, 0.15);
+    box-sizing: border-box;
+  }
+
+  /* SIDEBAR COMPONENTS */
+  .sidebar-logo { font-size: 20px; font-weight: 800; color: ${G.orange}; margin-bottom: 24px; text-align: center; }
+  .sidebar-logo span { color: ${G.text}; }
+  
+  .sidebar-profile { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,0.4); border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); margin-bottom: 20px; }
+  .profile-info { overflow: hidden; }
+  .profile-name { font-size: 14px; font-weight: 800; color: ${G.text}; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+  .profile-role { font-size: 11px; text-transform: uppercase; color: ${G.textSub}; font-weight: 700; letter-spacing: .5px; margin-top: 2px; }
+
+  .sidebar-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; }
+  .sidebar-stat-card { background: rgba(255,255,255,0.5); border: 1px solid ${G.grayBorder}; border-radius: 10px; padding: 8px; text-align: center; }
+  .sidebar-stat-card span { display: block; font-size: 10px; color: ${G.textSub}; font-weight: 700; }
+  .sidebar-stat-card strong { display: block; font-size: 12px; color: ${G.text}; font-weight: 800; margin-top: 2px; }
+
+  .sidebar-nav { display: flex; flex-direction: column; gap: 6px; }
+  .sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: ${G.textSub};
+    transition: all 0.25s;
+    width: 100%;
+    text-align: left;
+  }
+  .sidebar-nav-item:hover { background: rgba(255,255,255,0.5); color: ${G.orange}; }
+  .sidebar-nav-item.active { background: ${G.orangeLight}; color: ${G.orange}; }
+  .nav-icon { font-size: 16px; }
+
+  .login-body {
+    padding: 28px 24px;
+  }
+
+  /* RESPONSIVE DESIGN BREAKPOINTS */
+  /* Laptop & Tablet Breakpoint (768px to 1024px) */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .web-sidebar {
+      width: 210px;
+      padding: 16px 12px;
+    }
+    .sidebar-logo {
+      margin-bottom: 16px;
+    }
+    .sidebar-profile {
+      padding: 8px;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .profile-name {
+      font-size: 13px;
+    }
+    .sidebar-stats {
+      margin-bottom: 16px;
+      gap: 6px;
+    }
+    .sidebar-stat-card {
+      padding: 6px;
+    }
+    .sidebar-stat-card strong {
+      font-size: 11px;
+    }
+    .web-content {
+      padding: 16px;
+    }
+    .grid3 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  /* Mobile Phone Breakpoint (< 768px) */
+  @media (max-width: 768px) {
+    .app { flex-direction: column-reverse; }
+    .web-content { flex: 1; height: calc(100vh - 60px); padding: 16px; }
+    .web-sidebar {
+      width: 100%;
+      height: 60px;
+      flex-direction: row;
+      padding: 0 10px;
+      border-right: none;
+      border-top: 1.5px solid ${G.grayBorder};
+      background: ${G.white};
+      z-index: 100;
+    }
+    .sidebar-logo, .sidebar-profile, .sidebar-stats, .sidebar-progress, .sidebar-bottom { display: none; }
+    .sidebar-top { width: 100%; display: flex; align-items: center; }
+    .sidebar-nav { display: flex; flex-direction: row; width: 100%; justify-content: space-around; gap: 0; }
+    .sidebar-nav-item { flex-direction: column; padding: 4px; font-size: 10px; gap: 2px; align-items: center; background: none !important; width: auto; }
+    .nav-icon { font-size: 18px; }
+    .nav-label { font-size: 9px; }
+  }
+
+  @media (max-width: 480px) {
+    .card {
+      padding: 16px;
+    }
+    .dash-hero {
+      padding: 20px 16px;
+    }
+  }
+
+  @media (max-width: 440px) {
+    .login-body {
+      padding: 20px 16px;
+    }
+  }
 `;
 
 // ─── COMPONENTS ───────────────────────────────────────────────────────────────
@@ -842,60 +975,62 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div className="login-wrap">
-      <div className="login-box">
-        <div className="login-logo">🎮 VidyaQuest</div>
-        <div className="login-sub">Gamified Learning for Odisha — Smart India Hackathon</div>
+      <div className="login-box card" style={{ width: "100%", maxWidth: 420, padding: 0 }}>
+        <div className="login-body">
+          <div className="login-logo">🎮 VidyaQuest</div>
+          <div className="login-sub" style={{ marginBottom: 24 }}>Gamified Learning for Odisha — Smart India Hackathon</div>
 
-        {error && (
-          <div
-            style={{
-              color: "#E24B4A",
-              background: "#FCEBEB",
-              padding: 10,
-              borderRadius: 8,
-              fontSize: 13,
-              marginBottom: 16,
-            }}
-          >
-            {error}
+          {error && (
+            <div
+              style={{
+                color: "#E24B4A",
+                background: "#FCEBEB",
+                padding: 10,
+                borderRadius: 8,
+                fontSize: 13,
+                marginBottom: 16,
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          <label className="login-label">Sign in with Google</label>
+          <div id="google-signin-btn" className="google-btn-container" style={{ minHeight: 40 }}></div>
+
+          <div className="divider" style={{ margin: "20px 0 16px" }} />
+
+          <div>
+            <div className="login-label" style={{ textAlign: "center", marginBottom: 12, fontSize: 11, letterSpacing: 1 }}>
+              — DEMO / OFFLINE BYPASS —
+            </div>
+            <input
+              type="email"
+              placeholder="Demo Email (e.g. arjun@gmail.com)"
+              className="demo-input"
+              value={demoEmail}
+              onChange={(e) => setDemoEmail(e.target.value)}
+            />
+            <input
+              type="text"
+              placeholder="Demo Name (e.g. Arjun Sahu)"
+              className="demo-input"
+              value={demoName}
+              onChange={(e) => setDemoName(e.target.value)}
+            />
+            <button className="btn-outline" style={{ width: "100%", padding: 12 }} onClick={handleDemoLogin}>
+              Login with Demo Credentials →
+            </button>
           </div>
-        )}
 
-        <label className="login-label">Sign in with Google</label>
-        <div id="google-signin-btn" className="google-btn-container" style={{ minHeight: 40 }}></div>
-
-        <div className="divider" style={{ margin: "24px 0 16px" }} />
-
-        <div>
-          <div className="login-label" style={{ textAlign: "center", marginBottom: 12, fontSize: 11, letterSpacing: 1 }}>
-            — DEMO / OFFLINE BYPASS —
+          <div className="divider" />
+          <div className="flex gap-8" style={{ justifyContent: "center", flexWrap: "wrap" }}>
+            {["📶 Offline Mode", "🗣️ Odia + English", "🆓 Free Forever"].map((t) => (
+              <span key={t} className="tag">
+                {t}
+              </span>
+            ))}
           </div>
-          <input
-            type="email"
-            placeholder="Demo Email (e.g. arjun@gmail.com)"
-            className="demo-input"
-            value={demoEmail}
-            onChange={(e) => setDemoEmail(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Demo Name (e.g. Arjun Sahu)"
-            className="demo-input"
-            value={demoName}
-            onChange={(e) => setDemoName(e.target.value)}
-          />
-          <button className="btn-outline" style={{ width: "100%", padding: 12 }} onClick={handleDemoLogin}>
-            Login with Demo Credentials →
-          </button>
-        </div>
-
-        <div className="divider" />
-        <div className="flex gap-8" style={{ justifyContent: "center", flexWrap: "wrap" }}>
-          {["📶 Offline Mode", "🗣️ Odia + English", "🆓 Free Forever"].map((t) => (
-            <span key={t} className="tag">
-              {t}
-            </span>
-          ))}
         </div>
       </div>
     </div>
@@ -940,87 +1075,89 @@ function Onboarding({ user, onOnboardComplete }) {
 
   return (
     <div className="login-wrap">
-      <form className="login-box" onSubmit={handleSubmit}>
-        <div className="login-logo">🌱 Welcome, {user.name.split(" ")[0]}!</div>
-        <div className="login-sub">Select your account settings to get started.</div>
+      <form className="login-box card" onSubmit={handleSubmit} style={{ width: "100%", maxWidth: 460, padding: 0 }}>
+        <div className="login-body">
+          <div className="login-logo" style={{ fontSize: 24 }}>🌱 Welcome, {user.name.split(" ")[0]}!</div>
+          <div className="login-sub" style={{ marginBottom: 24 }}>Select your account settings to get started.</div>
 
-        {error && (
-          <div
-            style={{
-              color: "#E24B4A",
-              background: "#FCEBEB",
-              padding: 10,
-              borderRadius: 8,
-              fontSize: 13,
-              marginBottom: 16,
-            }}
-          >
-            {error}
-          </div>
-        )}
-
-        <label className="login-label">Register Me As</label>
-        <select className="login-select" value={role} onChange={(e) => setRole(e.target.value)}>
-          <option value="student">Student (Take Quests & Quizzes)</option>
-          <option value="teacher">Teacher (Monitor Village Students)</option>
-          <option value="parent">Parent (Track Child's Learning Logs)</option>
-        </select>
-
-        <label className="login-label">My Village / Block</label>
-        <input
-          type="text"
-          placeholder="e.g. Kendrapara"
-          className="demo-input"
-          value={village}
-          onChange={(e) => setVillage(e.target.value)}
-          required
-        />
-
-        {role === "student" && (
-          <>
-            <label className="login-label">Class Year</label>
-            <select
-              className="login-select"
-              value={studentClass}
-              onChange={(e) => setStudentClass(e.target.value)}
+          {error && (
+            <div
+              style={{
+                color: "#E24B4A",
+                background: "#FCEBEB",
+                padding: 10,
+                borderRadius: 8,
+                fontSize: 13,
+                marginBottom: 16,
+              }}
             >
-              {[
-                "Class 1",
-                "Class 2",
-                "Class 3",
-                "Class 4",
-                "Class 5",
-                "Class 6",
-                "Class 7",
-                "Class 8",
-                "Class 9",
-                "Class 10",
-              ].map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </>
-        )}
+              {error}
+            </div>
+          )}
 
-        {role === "parent" && (
-          <>
-            <label className="login-label">Child's Email (Gmail / Demo email they log in with)</label>
-            <input
-              type="email"
-              placeholder="e.g. child@gmail.com"
-              className="demo-input"
-              value={childEmail}
-              onChange={(e) => setChildEmail(e.target.value)}
-              required
-            />
-          </>
-        )}
+          <label className="login-label">Register Me As</label>
+          <select className="login-select" value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="student">Student (Take Quests & Quizzes)</option>
+            <option value="teacher">Teacher (Monitor Village Students)</option>
+            <option value="parent">Parent (Track Child's Learning Logs)</option>
+          </select>
 
-        <button className="btn-primary" type="submit" disabled={loading}>
-          {loading ? "Saving..." : "Start VidyaQuest →"}
-        </button>
+          <label className="login-label">My Village / Block</label>
+          <input
+            type="text"
+            placeholder="e.g. Kendrapara"
+            className="demo-input"
+            value={village}
+            onChange={(e) => setVillage(e.target.value)}
+            required
+          />
+
+          {role === "student" && (
+            <>
+              <label className="login-label">Class Year</label>
+              <select
+                className="login-select"
+                value={studentClass}
+                onChange={(e) => setStudentClass(e.target.value)}
+              >
+                {[
+                  "Class 1",
+                  "Class 2",
+                  "Class 3",
+                  "Class 4",
+                  "Class 5",
+                  "Class 6",
+                  "Class 7",
+                  "Class 8",
+                  "Class 9",
+                  "Class 10",
+                ].map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+
+          {role === "parent" && (
+            <>
+              <label className="login-label">Child's Email (Gmail / Demo email they log in with)</label>
+              <input
+                type="email"
+                placeholder="e.g. child@gmail.com"
+                className="demo-input"
+                value={childEmail}
+                onChange={(e) => setChildEmail(e.target.value)}
+                required
+              />
+            </>
+          )}
+
+          <button className="btn-primary" type="submit" disabled={loading} style={{ marginTop: 12 }}>
+            {loading ? "Saving..." : "Start VidyaQuest →"}
+          </button>
+        </div>
       </form>
     </div>
   );
@@ -2372,12 +2509,22 @@ function ParentDashboard({ user }) {
 
 // ─── NAV BAR ──────────────────────────────────────────────────────────────────
 
-function NavBar({ user, page, setPage, onLogout }) {
+function Sidebar({ user, page, setPage, onLogout }) {
   const studentTabs = [
-    { id: "dashboard", label: "Home" },
-    { id: "leaderboard", label: "Leaderboard" },
-    { id: "badges", label: "Badges" },
+    { id: "dashboard", label: "Home", icon: "🏠" },
+    { id: "leaderboard", label: "Leaderboard", icon: "🏆" },
+    { id: "badges", label: "Badges", icon: "🏅" },
   ];
+
+  const teacherTabs = [
+    { id: "teacher", label: "Dashboard", icon: "📊" },
+  ];
+
+  const parentTabs = [
+    { id: "parent", label: "Dashboard", icon: "👨‍👩‍👦" },
+  ];
+
+  const tabs = user.role === "student" ? studentTabs : user.role === "teacher" ? teacherTabs : parentTabs;
 
   const initials = user.name
     .split(" ")
@@ -2386,43 +2533,64 @@ function NavBar({ user, page, setPage, onLogout }) {
     .slice(0, 2);
 
   return (
-    <>
-      <nav className="nav">
-        <div className="nav-logo">
+    <aside className="web-sidebar">
+      <div className="sidebar-top">
+        <div className="sidebar-logo">
           🎮 <span>VidyaQuest</span>
         </div>
+        
+        <div className="sidebar-profile">
+          <Avatar initials={initials} src={user.avatar} size={38} />
+          <div className="profile-info">
+            <div className="profile-name" title={user.name}>{user.name}</div>
+            <div className="profile-role">{user.role}</div>
+          </div>
+        </div>
+
         {user.role === "student" && (
-          <div className="nav-tabs">
-            {studentTabs.map((t) => (
-              <button
-                key={t.id}
-                className={`nav-tab ${page === t.id ? "active" : ""}`}
-                onClick={() => setPage(t.id)}
-              >
-                {t.label}
-              </button>
-            ))}
+          <div className="sidebar-stats">
+            <div className="sidebar-stat-card">
+              <span>🔥 Streak</span>
+              <strong>{user.streak || 0} Days</strong>
+            </div>
+            <div className="sidebar-stat-card">
+              <span>⭐ Total XP</span>
+              <strong>{user.xp || 0} XP</strong>
+            </div>
           </div>
         )}
-        <div className="nav-right">
-          {user.role === "student" && (
-            <>
-              <span className="streak-pill">🔥 {user.streak || 0}</span>
-              <span className="xp-pill">⭐ {user.xp || 0} XP</span>
-            </>
-          )}
-          <Avatar initials={initials} src={user.avatar} size={34} />
-          <button className="btn-outline btn-sm" onClick={onLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
-      <div className="xp-bar-global">
-        {user.role === "student" && (
-          <div className="xp-bar-fill" style={{ width: `${((user.xp % 200) / 200) * 100}%` }} />
-        )}
+
+        <nav className="sidebar-nav">
+          {tabs.map((t) => (
+            <button
+              key={t.id}
+              className={`sidebar-nav-item ${page === t.id ? "active" : ""}`}
+              onClick={() => setPage(t.id)}
+            >
+              <span className="nav-icon">{t.icon}</span>
+              <span className="nav-label">{t.label}</span>
+            </button>
+          ))}
+        </nav>
       </div>
-    </>
+
+      <div className="sidebar-bottom">
+        {user.role === "student" && (
+          <div className="sidebar-progress">
+            <div className="flex justify-between mb-8" style={{ fontSize: 11, fontWeight: 700 }}>
+              <span>Lv. {user.level || 1}</span>
+              <span>{(user.xp || 0) % 200}/200 XP</span>
+            </div>
+            <div className="progress-bar-wrap" style={{ height: 6 }}>
+              <div className="progress-bar-fill" style={{ height: 6, width: `${(((user.xp || 0) % 200) / 200) * 100}%` }} />
+            </div>
+          </div>
+        )}
+        <button className="btn-outline btn-sm" style={{ width: "100%", marginTop: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }} onClick={onLogout}>
+          <span>🚪</span> Logout
+        </button>
+      </div>
+    </aside>
   );
 }
 
@@ -2635,8 +2803,10 @@ export default function App() {
       <div className="bg-glow-circle two"></div>
       <div className="bg-glow-circle three"></div>
       <div className="app">
-        <NavBar user={user} page={page} setPage={setPage} onLogout={handleLogout} />
-        <main className="main">{renderPage()}</main>
+        <Sidebar user={user} page={page} setPage={setPage} onLogout={handleLogout} />
+        <div className="web-content">
+          <main className="main">{renderPage()}</main>
+        </div>
       </div>
       <Toast msg={toast} />
       <ConfettiCanvas active={confettiActive} />

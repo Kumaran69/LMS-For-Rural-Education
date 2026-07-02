@@ -3,6 +3,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
 import authRoutes from "./routes/auth.js";
 import studentRoutes from "./routes/student.js";
 import teacherRoutes from "./routes/teacher.js";
@@ -10,6 +13,9 @@ import parentRoutes from "./routes/parent.js";
 
 // Load environment variables
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -23,13 +29,20 @@ app.use("/api/student", studentRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/parent", parentRoutes);
 
-// Root route
-app.get("/", (req, res) => {
-  res.send("VidyaQuest LMS Backend API is running...");
+// Serve frontend static assets
+const frontendDistPath = path.join(__dirname, "../../frontend/dist");
+app.use(express.static(frontendDistPath));
+
+// Wildcard route to serve the React index.html for client-side routing
+app.get("*", (req, res) => {
+  if (req.originalUrl.startsWith("/api")) {
+    return res.status(404).json({ message: "API route not found" });
+  }
+  res.sendFile(path.join(frontendDistPath, "index.html"));
 });
 
 // Database connection
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/vidyaquest";
 
 console.log("Connecting to MongoDB...");
